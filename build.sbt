@@ -50,7 +50,7 @@ lazy val slick = taskKey[Seq[File]]("gen-tables")  // register manual sbt comman
 slick := {
   val (dir, cp, r, s) = ((sourceManaged in Compile).value, (dependencyClasspath in Compile).value, (runner in Compile).value, streams.value)
   val pkg = "dao"
-  r.run("codegen.CodeGenerator", cp.files, Array(dir.getPath), s.log)
+  r.run("codegen.CodeGenerator", cp.files, Array(dir.getPath, pkg), s.log)
   val outputFile = dir / pkg.replace(".", "/") / "Tables.scala"
   Seq(outputFile)
 }

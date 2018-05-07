@@ -17,7 +17,7 @@ object CodeGenerator{
       codegen.map(_.writeToFile(
         "slick.driver.H2Driver",
         args(0),
-        "demo",
+        args(1),
         "Tables",
         "Tables.scala"
       )),
