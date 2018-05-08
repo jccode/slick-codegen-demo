@@ -10,6 +10,6 @@ class Repo(val profile: JdbcProfile) extends Tables {
   val db = Database.forConfig("mydb")
 
   def allCoffees() = {
-    db.run(Coffees.result)
+    db.run(UserTable.result)
   }
 }

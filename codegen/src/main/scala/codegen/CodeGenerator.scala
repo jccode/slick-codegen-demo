@@ -28,43 +28,33 @@ object CodeGenerator{
   val db = H2Profile.api.Database.forURL(url,driver=jdbcDriver)
   // filter out desired tables
   val included = Seq("COFFEES","SUPPLIERS","COF_INVENTORY")
+
+  val customImports = "import core._\n"
+
   val codegen = db.run{
-    H2Profile.defaultTables.map(_.filter(t => included contains t.name.name)).flatMap( H2Profile.createModelBuilder(_,false).buildModel )
+    H2Profile.defaultTables
+      // .map(_.filter(t => included contains t.name.name))
+      .flatMap( H2Profile.createModelBuilder(_,false).buildModel )
   }.map{ model =>
-    new slick.codegen.SourceCodeGenerator(model){
-      // customize Scala entity name (case class, etc.)
-      override def entityName = dbTableName => dbTableName match {
-        case "COFFEES" => "Coffee"
-        case "SUPPLIERS" => "Supplier"
-        case "COF_INVENTORY" => "CoffeeInventoryItem"
-        case _ => super.entityName(dbTableName)
-      }
-      // customize Scala table name (table class, table values, ...)
-      override def tableName = dbTableName => dbTableName match {
-        case "COF_INVENTORY" => "CoffeeInventory"
-        case _ => super.tableName(dbTableName)
-      }
-      // override generator responsible for tables
-      override def Table = new Table(_){
+    new slick.codegen.SourceCodeGenerator(model) {
+      override def entityName: String => String = (dbName: String) => dbName.toCamelCase
+
+      override def tableName: String => String = (dbName: String) => dbName.toCamelCase + "Table"
+
+      override def code: String = customImports+super.code
+
+      override def Table = new Table(_) {
         table =>
-        // customize table value (TableQuery) name (uses tableName as a basis)
-        override def TableValue = new TableValue{
-          override def rawName = super.rawName.uncapitalize
+        override def EntityType = new EntityType {
+          override def parents: Seq[String] = Seq("BaseEntity")
         }
-        // override generator responsible for columns
-        override def Column = new Column(_){
-          // customize Scala column names
-          override def rawName = (table.model.name.table,this.model.name) match {
-            case ("COFFEES","COF_NAME") => "name"
-            case ("COFFEES","SUP_ID") => "supplierId"
-            case ("SUPPLIERS","SUP_ID") => "id"
-            case ("SUPPLIERS","SUP_NAME") => "name"
-            case ("COF_INVENTORY","QUAN") => "quantity"
-            case ("COF_INVENTORY","COF_NAME") => "coffeeName"
-            case _ => super.rawName
-          }
+
+        override def TableClass = new TableClassDef {
+          override def parents: Seq[String] = Seq("AbstractTable")
         }
       }
     }
   }
+
+
 }
