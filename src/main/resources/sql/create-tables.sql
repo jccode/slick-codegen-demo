@@ -11,7 +11,7 @@ CREATE TABLE user (
 CREATE INDEX user_name ON user (name);
 
 CREATE TABLE account (
-  id   bigint not null primary key auto_increment,
+  id   INTEGER not null primary key auto_increment,
   user_id INTEGER NOT NULL ,
   name VARCHAR(50) NOT NULL ,
   balance INTEGER,
