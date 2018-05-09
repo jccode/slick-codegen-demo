@@ -1,6 +1,9 @@
 
+import core.AbstractRepo
 import dao.Tables
+import slick.basic.DatabaseConfig
 import slick.jdbc.JdbcProfile
+import slick.lifted.TableQuery
 
 class Repo(val profile: JdbcProfile) extends Tables {
 
@@ -12,4 +15,14 @@ class Repo(val profile: JdbcProfile) extends Tables {
   def allCoffees() = {
     db.run(UserTable.result)
   }
+}
+
+
+trait UserRepoSupport extends Tables {
+
+  val config = DatabaseConfig.forConfig[JdbcProfile]("mydb")
+
+//  val userRepo = new AbstractRepo[JdbcProfile, User, UserTable, TableQuery[UserTable]](config, UserTable)
+  val userRepo = new AbstractRepo(config, UserTable)
+
 }

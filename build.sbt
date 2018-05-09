@@ -54,3 +54,4 @@ slick := {
   val outputFile = dir / pkg.replace(".", "/") / "Tables.scala"
   Seq(outputFile)
 }
+sourceGenerators in Compile += slick
