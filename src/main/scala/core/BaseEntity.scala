@@ -5,3 +5,4 @@ trait BaseEntity {
   def createTime: java.sql.Timestamp
   def updateTime: java.sql.Timestamp
 }
+
