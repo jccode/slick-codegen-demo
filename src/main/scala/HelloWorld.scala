@@ -8,7 +8,7 @@ import scala.concurrent.duration._
 
 object HelloWorld extends App {
 
-  def exec[T](future: Future[T]) = Await.result(future, 3 second)
+  def exec[T](future: Future[T]) = Await.result(future, 5 seconds)
 
   def repo(): Unit = {
     val repo = new Repo(H2Profile)
@@ -30,11 +30,15 @@ object HelloWorld extends App {
 
     val now = new Timestamp(System.currentTimeMillis())
     val u = repo.User(3,"fff", "fff", "fff", None, now, now)
-    exec(userRepo.all.map(_.foreach(println)))
-    exec(userRepo.get(1).map(_.foreach(println)))
+
+    exec(userRepo.all().map(_.foreach(println)))
+//    exec(userRepo.get(1).map(_.foreach(println)))
 //    exec(userRepo.update(u))
 //    exec(userRepo.delete(3))
-    exec(userRepo.all.map(_.foreach(println)))
+//    exec(userRepo.all.map(_.foreach(println)))
+
+    println("------")
+    exec(userRepo.findByName("tom").map(_.foreach(println)))
   }
   repo2()
 

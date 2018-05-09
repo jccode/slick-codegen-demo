@@ -2,6 +2,6 @@ package core
 
 import slick.lifted.Rep
 
-trait AbstractTable {
+trait BaseTable {
   def id: Rep[Int]
 }

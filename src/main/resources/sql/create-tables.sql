@@ -1,4 +1,4 @@
-CREATE TABLE user (
+CREATE TABLE USER (
   id   INTEGER IDENTITY PRIMARY KEY,
   name VARCHAR(50) NOT NULL,
   password VARCHAR(128) NOT NULL ,
@@ -8,9 +8,9 @@ CREATE TABLE user (
   update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
-CREATE INDEX user_name ON user (name);
+CREATE INDEX user_name ON USER (name);
 
-CREATE TABLE account (
+CREATE TABLE ACCOUNT (
   id   INTEGER not null primary key auto_increment,
   user_id INTEGER NOT NULL ,
   name VARCHAR(50) NOT NULL ,
@@ -19,9 +19,9 @@ CREATE TABLE account (
   update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
-CREATE INDEX account_name ON account (name);
+CREATE INDEX account_name ON ACCOUNT (name);
 
-CREATE TABLE product (
+CREATE TABLE PRODUCT (
   id   INTEGER IDENTITY PRIMARY KEY,
   name VARCHAR(50) NOT NULL comment '商品名',
   price INTEGER comment '价格',

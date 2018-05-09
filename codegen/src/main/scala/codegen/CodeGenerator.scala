@@ -50,7 +50,7 @@ object CodeGenerator{
         }
 
         override def TableClass = new TableClassDef {
-          override def parents: Seq[String] = Seq("AbstractTable")
+          override def parents: Seq[String] = Seq("BaseTable")
         }
       }
     }

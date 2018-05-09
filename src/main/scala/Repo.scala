@@ -5,6 +5,8 @@ import slick.basic.DatabaseConfig
 import slick.jdbc.JdbcProfile
 import slick.lifted.TableQuery
 
+import scala.concurrent.Future
+
 class Repo(val profile: JdbcProfile) extends Tables {
 
   import profile._
@@ -22,6 +24,14 @@ trait UserRepoSupport extends Tables {
 
   val config = DatabaseConfig.forConfig[JdbcProfile]("mydb")
 
-  val userRepo = new AbstractRepo[JdbcProfile, User, UserTable, TableQuery[UserTable]](config, UserTable)
+  class UserRepo extends AbstractRepo[JdbcProfile, User, UserTable, TableQuery[UserTable]](config, UserTable) {
+    import dbConfig.profile.api._
+
+    def findByName(name: String): Future[Seq[User]] = elements.filter(_.name === name).result
+  }
+
+  val userRepo = new UserRepo
+
+  //  val userRepo = new AbstractRepo[JdbcProfile, User, UserTable, TableQuery[UserTable]](config, UserTable)
 
 }
