@@ -1,5 +1,7 @@
 package core
 
+import java.sql.Timestamp
+
 import slick.basic.DatabaseConfig
 import slick.jdbc.JdbcProfile
 import slick.lifted.TableQuery
@@ -30,12 +32,13 @@ trait BaseRepo[T <: slick.lifted.AbstractTable[_], Q <: TableQuery[T]] {
 class AbstractRepo[P <: JdbcProfile, E <: BaseEntity, T <: P#Table[E] with BaseTable, Q <: TableQuery[T]](val dbConfig: DatabaseConfig[P], val elements: Q) extends BaseRepo[T, Q] {
 
   import dbConfig.profile.api._
+  import shapeless._
 
   protected val db = dbConfig.db
 
   protected implicit def action2Future[T](action: DBIO[T]): Future[T] = db.run(action)
 
-  private def byId(id: Int) = elements.filter(_.id === id)
+  protected def byId(id: Int) = elements.filter(_.id === id)
 
   private def returnId = elements returning elements.map(_.id)
 
@@ -43,9 +46,20 @@ class AbstractRepo[P <: JdbcProfile, E <: BaseEntity, T <: P#Table[E] with BaseT
 
   override def get(id: Int): Future[Option[E]] = db.run(byId(id).result.headOption)
 
-  override def insert(entity: E): Future[Int] = db.run(returnId += entity)
+  override def insert(entity: E): Future[Int] = db.run(returnId += beforeInsert(entity))
 
-  override def update(entity: E): Future[Int] = db.run(byId(entity.id).update(entity))
+  override def update(entity: E): Future[Int] = db.run(byId(entity.id).update(beforeUpdate(entity)))
 
   override def delete(id: Int): Future[Int] = db.run(byId(id).delete)
+
+
+  private val createTimeLen = lens[E].createTime
+  private val updateTimeLen = lens[E].updateTime
+  private val createUpdateTimeLen = createUpdateTimeLen ~ updateTimeLen
+  private def now = new Timestamp(System.currentTimeMillis())
+
+  protected def beforeUpdate(entity: E): E = updateTimeLen.set(entity)(now)
+
+  protected def beforeInsert(entity: E): E = createUpdateTimeLen.set(entity)(now, now)
+
 }
