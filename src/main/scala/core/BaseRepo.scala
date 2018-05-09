@@ -42,9 +42,11 @@ class AbstractRepo[P <: JdbcProfile, E <: BaseEntity, T <: P#Table[E] with Abstr
 
   override def get(id: Int): Future[Option[E]] = db.run(byId(id).result.headOption)
 
-  override def insert(entity: E): Future[Int] = db.run(returnId += entity)
+  override def insert(entity: E): Future[Int] = {
+    db.run(returnId += entity)
+  }
 
   override def update(entity: E): Future[Int] = db.run(byId(entity.id).update(entity))
 
-  override def delete(id: Int): Future[Int] = ???
+  override def delete(id: Int): Future[Int] = db.run(byId(id).delete)
 }

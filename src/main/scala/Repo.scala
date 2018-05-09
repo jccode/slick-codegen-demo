@@ -22,7 +22,6 @@ trait UserRepoSupport extends Tables {
 
   val config = DatabaseConfig.forConfig[JdbcProfile]("mydb")
 
-//  val userRepo = new AbstractRepo[JdbcProfile, User, UserTable, TableQuery[UserTable]](config, UserTable)
-  val userRepo = new AbstractRepo(config, UserTable)
+  val userRepo = new AbstractRepo[JdbcProfile, User, UserTable, TableQuery[UserTable]](config, UserTable)
 
 }
