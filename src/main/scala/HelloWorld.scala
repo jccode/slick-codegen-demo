@@ -29,7 +29,7 @@ object HelloWorld extends App {
     val userRepo = repo.userRepo
 
     val now = new Timestamp(System.currentTimeMillis())
-    val u = repo.User(3,"fff", "fff", "fff", None, now, now)
+    val u = repo.User(3,"fff", "fff", "fff", None, null, null)
 
     exec(userRepo.all().map(_.foreach(println)))
 //    exec(userRepo.get(1).map(_.foreach(println)))
@@ -37,8 +37,10 @@ object HelloWorld extends App {
 //    exec(userRepo.delete(3))
 //    exec(userRepo.all.map(_.foreach(println)))
 
+    exec(userRepo.insert(u).map(println(_)))
     println("------")
-    exec(userRepo.findByName("tom").map(_.foreach(println)))
+    exec(userRepo.findByName("fff").map(_.foreach(println)))
+    exec(userRepo.all().map(_.foreach(println)))
   }
   repo2()
 

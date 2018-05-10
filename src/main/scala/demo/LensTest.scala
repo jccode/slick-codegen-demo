@@ -2,45 +2,45 @@ package demo
 
 import java.sql.Timestamp
 
+
 import shapeless._
 
 trait BaseEntity {
   def id: Int
   def createTime: Timestamp
   def updateTime: Timestamp
+}
 
-
+object BaseEntity {
   val createTimeWitness = Witness('createTime)
   val updateTimeWitness = Witness('updateTime)
   type TypeCreateTime = createTimeWitness.T
   type TypeUpdateTime = updateTimeWitness.T
-}
 
-object BaseEntity {
-  def copyWithUpdateTime[T <: BaseEntity](t: T, time: Timestamp)(implicit mkLens: MkFieldLens.Aux[T, T#TypeCreateTime, Timestamp]): T = {
+  def copyWithUpdateTime[T <: BaseEntity](t: T, time: Timestamp)(implicit mkLens: MkFieldLens.Aux[T, TypeCreateTime, Timestamp]): T = {
     val len = mkLens()
     len.set(t)(time)
   }
 
-  def copyWithCreateTime[T <: BaseEntity](t: T, time: Timestamp)(implicit mkLens: MkFieldLens.Aux[T, T#TypeUpdateTime, Timestamp]): T = {
+  def copyWithCreateTime[T <: BaseEntity](t: T, time: Timestamp)(implicit mkLens: MkFieldLens.Aux[T, TypeUpdateTime, Timestamp]): T = {
     val len = mkLens()
     len.set(t)(time)
   }
 
   implicit class WithCreateTime[T <: BaseEntity](t: T) {
-    def withCreateTime(time: Timestamp)(implicit mkLens: MkFieldLens.Aux[T, T#TypeCreateTime, Timestamp]): T = mkLens().set(t)(time)
+    def withCreateTime(time: Timestamp)(implicit mkLens: MkFieldLens.Aux[T, TypeCreateTime, Timestamp]): T = mkLens().set(t)(time)
   }
 
   implicit class WithUpdateTime[T <: BaseEntity](t: T) {
-    def withUpdateTime(time: Timestamp)(implicit mkLens: MkFieldLens.Aux[T, T#TypeUpdateTime, Timestamp]): T = mkLens().set(t)(time)
+    def withUpdateTime(time: Timestamp)(implicit mkLens: MkFieldLens.Aux[T, TypeUpdateTime, Timestamp]): T = mkLens().set(t)(time)
   }
 }
 
 case class User(id: Int, name: String, age: Int, createTime: Timestamp, updateTime: Timestamp) extends BaseEntity
 
 object Util {
-
-  def updateCreateTime[A <: BaseEntity](a: A, time: Timestamp)(implicit mkLens: MkFieldLens.Aux[A, A#TypeCreateTime, Timestamp]): A = {
+  import demo.BaseEntity.TypeCreateTime
+  def updateCreateTime[A <: BaseEntity](a: A, time: Timestamp)(implicit mkLens: MkFieldLens.Aux[A, TypeCreateTime, Timestamp]): A = {
     val lenCreateTime = mkLens()
     lenCreateTime.set(a)(time)
   }
@@ -82,7 +82,9 @@ object LensTest extends App {
 
 
 class BaseRepo[E <: BaseEntity] {
-  def beforeUpdate(e: E)(implicit createTimeLens: MkFieldLens.Aux[E, E#TypeCreateTime, Timestamp], updateTimeLens: MkFieldLens.Aux[E, E#TypeUpdateTime, Timestamp]): E = {
+  import demo.BaseEntity.{TypeCreateTime, TypeUpdateTime}
+
+  def beforeUpdate(e: E)(implicit createTimeLens: MkFieldLens.Aux[E, TypeCreateTime, Timestamp], updateTimeLens: MkFieldLens.Aux[E, TypeUpdateTime, Timestamp]): E = {
     val now = new Timestamp(System.currentTimeMillis())
     e.withCreateTime(now).withUpdateTime(now)
   }

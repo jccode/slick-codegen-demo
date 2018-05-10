@@ -1,4 +1,6 @@
 
+import java.sql.Timestamp
+
 import core.AbstractRepo
 import dao.Tables
 import slick.basic.DatabaseConfig
@@ -28,6 +30,8 @@ trait UserRepoSupport extends Tables {
     import dbConfig.profile.api._
 
     def findByName(name: String): Future[Seq[User]] = elements.filter(_.name === name).result
+
+//    override protected def beforeInsert(entity: User): User = entity.withUpdateTime(new Timestamp(123123123L)).withCreateTime(new Timestamp(System.currentTimeMillis()))
   }
 
   val userRepo = new UserRepo

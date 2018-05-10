@@ -8,22 +8,19 @@ trait BaseEntity {
   def id: Int
   def createTime: Timestamp
   def updateTime: Timestamp
+}
 
+object BaseEntity {
   val witCreateTime = Witness('createTime)
   val witUpdateTime = Witness('updateTime)
   type TypeCreateTime = witCreateTime.T
   type TypeUpdateTime = witUpdateTime.T
-}
 
-object BaseEntity {
-  def copyWithUpdateTime[T <: BaseEntity](t: T, time: Timestamp)(implicit mkLens: MkFieldLens.Aux[T, T#TypeCreateTime, Timestamp]): T = {
-    val len = mkLens()
-    len.set(t)(time)
+  implicit class WithCreateTime[T <: BaseEntity](t: T) {
+    def withCreateTime(time: Timestamp)(implicit mkLens: MkFieldLens.Aux[T, TypeCreateTime, Timestamp]): T = mkLens().set(t)(time)
   }
-
-  def copyWithCreateTime[T <: BaseEntity](t: T, time: Timestamp)(implicit mkLens: MkFieldLens.Aux[T, T#TypeUpdateTime, Timestamp]): T = {
-    val len = mkLens()
-    len.set(t)(time)
+  implicit class WithUpdateTime[T <: BaseEntity](t: T) {
+    def withUpdateTime(time: Timestamp)(implicit mkLens: MkFieldLens.Aux[T, TypeUpdateTime, Timestamp]): T = mkLens().set(t)(time)
   }
 }
 
