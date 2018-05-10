@@ -8,15 +8,16 @@ trait BaseEntity {
   def id: Int
   def createTime: Timestamp
   def updateTime: Timestamp
+
+  val witCreateTime = Witness('createTime)
+  type tpeCreateTime = witCreateTime.T
 }
 
 case class User(id: Int, name: String, age: Int, createTime: Timestamp, updateTime: Timestamp) extends BaseEntity
 
 object Util {
-  val witCreateTime = Witness('createTime)
-  type tpeCreateTime = witCreateTime.T
 
-  def updateCreateTime[A](a: A, time: Timestamp)(implicit mkLens: MkFieldLens.Aux[A, tpeCreateTime, Timestamp]): A = {
+  def updateCreateTime[A <: BaseEntity](a: A, time: Timestamp)(implicit mkLens: MkFieldLens.Aux[A, A#tpeCreateTime, Timestamp]): A = {
     val lenCreateTime = mkLens()
     lenCreateTime.set(a)(time)
   }
@@ -43,13 +44,19 @@ object LensTest extends App {
   //
   //
   // Why? And how to fixed it?
+
+  def class_param_call() = {
+    val repo = new BaseRepo[User]
+    println(repo.beforeUpdate(user))
+  }
+  class_param_call()
 }
 
-/*
+
 class BaseRepo[E <: BaseEntity] {
-  def beforeUpdate(e: E): E = {
+  def beforeUpdate(e: E)(implicit in: MkFieldLens.Aux[E, E#tpeCreateTime, Timestamp]): E = {
     val now = new Timestamp(System.currentTimeMillis())
     Util.updateCreateTime(e, now)
   }
 }
-*/
+
