@@ -52,9 +52,16 @@ object CodeGenerator{
         override def TableClass = new TableClassDef {
           override def parents: Seq[String] = Seq("BaseTable")
         }
+
+        override def TableValue = new TableValueDef {
+          override def rawName: String = model.name.table.toCamelCase.toPlural
+        }
       }
     }
   }
 
+  implicit class StringExt(val s: String) {
+    def toPlural: String = if(s.matches(".*(x|ch|ss|sh|o)$")) { s"${s}es" } else { s"${s}s" }
+  }
 
 }
