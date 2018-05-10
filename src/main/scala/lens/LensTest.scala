@@ -1,4 +1,4 @@
-package demo
+package lens
 
 import java.sql.Timestamp
 
@@ -39,7 +39,7 @@ object BaseEntity {
 case class User(id: Int, name: String, age: Int, createTime: Timestamp, updateTime: Timestamp) extends BaseEntity
 
 object Util {
-  import demo.BaseEntity.TypeCreateTime
+  import BaseEntity.TypeCreateTime
   def updateCreateTime[A <: BaseEntity](a: A, time: Timestamp)(implicit mkLens: MkFieldLens.Aux[A, TypeCreateTime, Timestamp]): A = {
     val lenCreateTime = mkLens()
     lenCreateTime.set(a)(time)
@@ -56,7 +56,6 @@ object LensTest extends App {
   val now = new Timestamp(System.currentTimeMillis())
 
   def normal_method_call_is_ok(): Unit = {
-//    println(Util.updateCreateTime(user, now))
     println(BaseEntity.copyWithCreateTime(user, now))
     println(BaseEntity.copyWithUpdateTime(user, now))
     println(BaseEntity.copyWithUpdateTime(BaseEntity.copyWithCreateTime(user, now), now))
@@ -64,13 +63,6 @@ object LensTest extends App {
   }
   normal_method_call_is_ok()
 
-  // However, in the below `BaseRepo` definition,
-  // Compiler gives an compile error:
-  //
-  //     could not find implicit value for parameter mkLens: shapeless.MkFieldLens.Aux[E,demo.Util.tpeCreateTime,java.sql.Timestamp]
-  //
-  //
-  // Why? And how to fixed it?
 
   def class_param_call() = {
     val repo = new BaseRepo[User]
@@ -82,7 +74,7 @@ object LensTest extends App {
 
 
 class BaseRepo[E <: BaseEntity] {
-  import demo.BaseEntity.{TypeCreateTime, TypeUpdateTime}
+  import BaseEntity.{TypeCreateTime, TypeUpdateTime}
 
   def beforeUpdate(e: E)(implicit createTimeLens: MkFieldLens.Aux[E, TypeCreateTime, Timestamp], updateTimeLens: MkFieldLens.Aux[E, TypeUpdateTime, Timestamp]): E = {
     val now = new Timestamp(System.currentTimeMillis())

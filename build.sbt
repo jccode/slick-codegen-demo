@@ -24,6 +24,7 @@ lazy val sharedSettings = Seq(
     "com.typesafe" % "config" % "1.3.1",
     "org.slf4j" % "slf4j-nop" % "1.7.10",
     "com.chuusai" %% "shapeless" % "2.3.3",
+    "org.scalatest" %% "scalatest" % "3.0.1" % "test",
   )
 )
 

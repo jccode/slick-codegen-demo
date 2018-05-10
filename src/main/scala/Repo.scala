@@ -1,6 +1,4 @@
 
-import java.sql.Timestamp
-
 import core.AbstractRepo
 import dao.Tables
 import slick.basic.DatabaseConfig
@@ -11,7 +9,6 @@ import scala.concurrent.Future
 
 class Repo(val profile: JdbcProfile) extends Tables {
 
-  import profile._
   import profile.api._
 
   val db = Database.forConfig("mydb")
@@ -31,11 +28,8 @@ trait UserRepoSupport extends Tables {
 
     def findByName(name: String): Future[Seq[User]] = elements.filter(_.name === name).result
 
-//    override protected def beforeInsert(entity: User): User = entity.withUpdateTime(new Timestamp(123123123L)).withCreateTime(new Timestamp(System.currentTimeMillis()))
   }
 
   val userRepo = new UserRepo
-
-  //  val userRepo = new AbstractRepo[JdbcProfile, User, UserTable, TableQuery[UserTable]](config, UserTable)
 
 }

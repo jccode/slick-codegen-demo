@@ -12,17 +12,14 @@ object HelloWorld extends App {
 
   def repo(): Unit = {
     val repo = new Repo(H2Profile)
+    println("-- repo --")
     exec( repo.allCoffees().map(_.foreach(println)) )
-  }
-
-  def ext(): Unit = {
-    val foo = new Foo() with FooSupport
-    foo.fooEx()
-    println(foo)
   }
 
 
   def repo2(): Unit = {
+    println("-- repo2 --")
+
     val repo = new UserRepoSupport {
       override val profile = H2Profile
     }
@@ -46,16 +43,3 @@ object HelloWorld extends App {
 
 }
 
-
-trait FooSupport { this: Foo =>
-  def fooEx(): Unit = {
-    foo()
-    println("fooEx")
-  }
-}
-
-class Foo() {
-  def foo(): Unit = {
-    println("foo")
-  }
-}
