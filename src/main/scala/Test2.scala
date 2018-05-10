@@ -19,4 +19,5 @@ object Test2 extends App {
 
   val b = B(7)
   println(idLens.get(b)) // 7
+  println(idLens.set(b)(8))
 }

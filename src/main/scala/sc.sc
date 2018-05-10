@@ -1,6 +1,8 @@
 import shapeless._
 import java.sql.Timestamp
 
+import demo.BaseEntity
+
 
 
 trait BaseEntity {
@@ -14,7 +16,7 @@ case class User(id: Int, name: String, password: String, salt: String, mobile: O
 val u1 = User(1, "tom", "111", "222", Some("1331111000"), null, null)
 val now = new Timestamp(System.currentTimeMillis())
 
-val lUser = lens[User]
+val lUser = lens[demo.User]
 val lenCreatetime = lUser.createTime
 val lenUpdatetime = lUser.updateTime
 val lenCreateUpdateTime = lenCreatetime ~ lenUpdatetime
