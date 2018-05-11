@@ -14,7 +14,7 @@ class Repo(val profile: JdbcProfile) extends Tables {
   val db = Database.forConfig("mydb")
 
   def allCoffees() = {
-    db.run(Users.result)
+    db.run(users.result)
   }
 }
 
@@ -23,7 +23,7 @@ trait UserRepoSupport extends Tables {
 
   val config = DatabaseConfig.forConfig[JdbcProfile]("mydb")
 
-  class UserRepo extends AbstractRepo[JdbcProfile, User, UserTable, TableQuery[UserTable]](config, Users) {
+  class UserRepo extends AbstractRepo[JdbcProfile, User, UserTable, TableQuery[UserTable]](config, users) {
     import dbConfig.profile.api._
 
     def findByName(name: String): Future[Seq[User]] = elements.filter(_.name === name).result

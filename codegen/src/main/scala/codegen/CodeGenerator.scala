@@ -54,7 +54,7 @@ object CodeGenerator{
         }
 
         override def TableValue = new TableValueDef {
-          override def rawName: String = model.name.table.toCamelCase.toPlural
+          override def rawName: String = model.name.table.toCamelCase.uncapitalize.toPlural
         }
       }
     }
