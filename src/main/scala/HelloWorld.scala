@@ -11,13 +11,6 @@ object HelloWorld extends App {
   def exec[T](future: Future[T]) = Await.result(future, 5 seconds)
 
   def repo(): Unit = {
-    val repo = new Repo(H2Profile)
-    println("-- repo --")
-    exec( repo.allCoffees().map(_.foreach(println)) )
-  }
-
-
-  def repo2(): Unit = {
     println("-- repo2 --")
 
     val repo = new UserRepoSupport {
@@ -39,7 +32,7 @@ object HelloWorld extends App {
     exec(userRepo.findByName("fff").map(_.foreach(println)))
     exec(userRepo.all().map(_.foreach(println)))
   }
-  repo2()
+//  repo()
 
 }
 

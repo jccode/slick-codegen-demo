@@ -49,10 +49,25 @@ lazy val slick = taskKey[Seq[File]]("gen-tables")  // register manual sbt comman
 
 
 // custom codegen; must be in another sub project.
+//slick := {
+//  val (dir, cp, r, s) = ((sourceManaged in Compile).value, (dependencyClasspath in Compile).value, (runner in Compile).value, streams.value)
+//  val pkg = "dao"
+//  r.run("codegen.CodeGenerator", cp.files, Array(dir.getPath, pkg), s.log)
+//  val outputFile = dir / pkg.replace(".", "/") / "Tables.scala"
+//  Seq(outputFile)
+//}
+
 slick := {
   val (dir, cp, r, s) = ((sourceManaged in Compile).value, (dependencyClasspath in Compile).value, (runner in Compile).value, streams.value)
   val pkg = "dao"
-  r.run("codegen.CodeGenerator", cp.files, Array(dir.getPath, pkg), s.log)
+  val slickProfile = "slick.jdbc.H2Profile"
+  val jdbcDriver = "org.h2.Driver"
+  val url = "jdbc:h2:mem:sample;INIT=RUNSCRIPT FROM 'src/main/resources/sql/drop-tables.sql'\\;RUNSCRIPT FROM 'src/main/resources/sql/create-tables.sql';"
+  val user = "sa"
+  val password = ""
+  val included = "PRODUCT,USER"
+  val excluded = ""
+  r.run("codegen2.CodeGenerator", cp.files, Array(slickProfile, jdbcDriver, url, dir.getPath, pkg, user, password, "true", "codegen2.CodeGenerator", included, excluded), s.log)
   val outputFile = dir / pkg.replace(".", "/") / "Tables.scala"
   Seq(outputFile)
 }

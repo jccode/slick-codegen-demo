@@ -7,17 +7,6 @@ import slick.lifted.TableQuery
 
 import scala.concurrent.Future
 
-class Repo(val profile: JdbcProfile) extends Tables {
-
-  import profile.api._
-
-  val db = Database.forConfig("mydb")
-
-  def allCoffees() = {
-    db.run(users.result)
-  }
-}
-
 
 trait UserRepoSupport extends Tables {
 
